@@ -2,4 +2,6 @@
   roles:
         - base
 
-
+- hosts: redis
+  roles:
+        - redis

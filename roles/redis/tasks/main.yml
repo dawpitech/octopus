@@ -1,0 +1,19 @@
+- name: Ensure Redis is installed
+  become: true
+  apt:
+    name: redis-server
+    state: present
+
+- name: Ensure Redis configuration
+  become: true
+  template:
+    src: ../files/redis.conf
+    dest: /etc/redis/redis.conf
+    owner: redis
+
+- name: Ensure Redis is started
+  become: true
+  service:
+    name: redis-server
+    state: started
+    enabled: true
