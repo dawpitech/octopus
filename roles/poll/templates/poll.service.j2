@@ -10,3 +10,4 @@ RestartSec=1
 User=root
 WorkingDirectory=/home/dawoox/poll
 ExecStart=/home/dawoox/poll/venv/bin/flask run --host=0.0.0.0 --port={{ poll_port }}
+Environment="REDIS_HOST={{ redis_host }}"

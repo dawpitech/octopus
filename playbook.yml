@@ -6,6 +6,12 @@
   roles:
         - redis
 
+- hosts: postgresql
+  vars:
+    postgresql_db: db
+  roles:
+        - postgresql
+
 - hosts: poll
   vars:
     redis_host: redis
