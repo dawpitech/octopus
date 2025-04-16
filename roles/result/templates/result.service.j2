@@ -1,0 +1,17 @@
+[Unit]
+Description=Octopus result service
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+User=root
+WorkingDirectory={{ ansible_env.HOME }}/result
+ExecStart=node server.js
+Environment="POSTGRES_HOST={{ postgres_host }}"
+Environment="POSTGRES_PORT={{ postgres_port }}"
+Environment="POSTGRES_DB={{ postgres_db }}"
+Environment="POSTGRES_USER={{ postgres_user }}"
+Environment="POSTGRES_PASSWORD={{ postgres_password }}"

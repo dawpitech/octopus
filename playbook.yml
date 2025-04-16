@@ -8,13 +8,23 @@
 
 - hosts: postgresql
   vars:
-    postgresql_db: db
+    postgresql_db: votes
   roles:
         - postgresql
 
 - hosts: poll
   vars:
-    redis_host: redis
-    poll_port: 80
+    poll_port: 5000
+    redis_host: "{{ hostvars[groups['redis'][0]]['ansible_host'] }}"
   roles:
         - poll
+
+- hosts: result
+  vars:
+    postgres_host: "{{ hostvars[groups['postgresql'][0]]['ansible_host'] }}"
+    postgres_port: 5432
+    postgres_db: votes
+    postgres_user: paul
+    postgres_password: password
+  roles:
+        - result
