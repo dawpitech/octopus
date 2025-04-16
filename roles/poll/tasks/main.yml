@@ -1,0 +1,29 @@
+- name: Upload and de-archive source code
+  unarchive:
+    src: ../../../poll.tar
+    dest: "{{ ansible_env.HOME }}"
+
+- name: Install dependencies
+  become: true
+  apt:
+    name: python3-venv
+    state: present
+
+- name: Install python dependencies
+  pip:
+    requirements: "{{ ansible_env.HOME }}/poll/requirements.txt"
+    virtualenv: "{{ ansible_env.HOME }}/poll/venv"
+    virtualenv_command: python3 -m venv
+
+- name: Create systemd service file
+  become: true
+  template:
+    src: templates/poll.service.j2
+    dest: /etc/systemd/system/poll.service
+
+- name: Start poll service
+  become: true
+  systemd:
+    name: poll
+    state: started
+    enabled: true

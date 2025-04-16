@@ -5,3 +5,10 @@
 - hosts: redis
   roles:
         - redis
+
+- hosts: poll
+  vars:
+    redis_host: redis
+    poll_port: 80
+  roles:
+        - poll
