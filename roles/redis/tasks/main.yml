@@ -16,7 +16,8 @@
   ufw:
     rule: allow
     port: '6379'
-    proto: tcp
+    insert: 0
+    insert_relative_to: "first-ipv4"
     state: reloaded
 
 - name: Ensure Redis is started

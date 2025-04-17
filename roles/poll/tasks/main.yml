@@ -26,7 +26,8 @@
   ufw:
     rule: allow
     port: '{{ poll_port}}'
-    proto: tcp
+    insert: 0
+    insert_relative_to: "first-ipv4"
     state: reloaded
 
 - name: Start poll service

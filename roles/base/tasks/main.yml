@@ -31,5 +31,5 @@
   become: true
   ufw:
     rule: reject
-    state: disabled
+    state: enabled
 

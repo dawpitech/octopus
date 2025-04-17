@@ -84,7 +84,7 @@
     dest: /etc/postgresql/16/main/pg_hba.conf
     contype: host
     address: all
-    users: all #"{{ postgres_user }}"
+    users: all
     create: true
 
 - name: Give permission to user
@@ -116,7 +116,8 @@
   ufw:
     rule: allow
     port: '"{{ postgres_port }}"'
-    proto: tcp
+    insert: 0
+    insert_relative_to: "first-ipv4"
     state: reloaded
 
 - name: Restart PostgreSQL

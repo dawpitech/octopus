@@ -16,6 +16,15 @@
   args:
     chdir: "{{ ansible_env.HOME }}/result"
 
+- name: Ensure UFW allow webapp traffic
+  become: true
+  ufw:
+    rule: allow
+    port: 80
+    insert: 0
+    insert_relative_to: "first-ipv4"
+    state: reloaded
+
 - name: Create systemd service file
   become: true
   template:
