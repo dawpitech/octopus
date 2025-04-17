@@ -1,0 +1,127 @@
+- name: Ensure prerequisites are met
+  become: true
+  apt:
+    name:
+      - wget
+      - gnupg
+      - lsb-release
+      - python3-psycopg2
+    state: present
+
+- name: Ensure PostgreSQL signing key is in keyring
+  become: true
+  apt_key:
+    url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
+    state: present
+
+- name: Ensure PostgreSQL repository is added
+  become: true
+  apt_repository:
+    repo: "deb http://apt.postgresql.org/pub/repos/apt/ {{ ansible_distribution_release }}-pgdg main"
+
+- name: Ensure PostgreSQL16 is installed
+  become: true
+  apt:
+    update_cache: true
+    name: postgresql-16
+
+- name: Ensure PostgreSQL is started
+  become: true
+  service:
+    name: postgresql
+    state: started
+    enabled: true
+
+- name: Ensure PostgreSQL listens on all addresses
+  become: true
+  lineinfile:
+    path: /etc/postgresql/16/main/postgresql.conf
+    regexp: '^#?listen_addresses\s*='
+    line: "listen_addresses = '*'"
+    state: present
+
+- name: Copy database schema on machine
+  become: true
+  template:
+    src: ../files/schema.sql
+    dest: /etc/postgresql/16/main/schema.sql
+    owner: postgres
+
+- name: Ensure database exists
+  become: true
+  become_user: postgres
+  vars:
+    ansible_ssh_pipelining: true
+  community.postgresql.postgresql_db:
+    name: "{{ postgres_db }}"
+    state: present
+
+- name: Ensure database match schema
+  become: true
+  become_user: postgres
+  vars:
+    ansible_ssh_pipelining: true
+  community.postgresql.postgresql_script:
+    db: "{{ postgres_db }}"
+    path: /etc/postgresql/16/main/schema.sql
+
+- name: Create user in database
+  become: true
+  become_user: postgres
+  vars:
+    ansible_ssh_pipelining: true
+  community.postgresql.postgresql_user:
+    login_db: "{{ postgres_db }}"
+    name: "{{ postgres_user }}"
+    password: "{{ postgres_password }}"
+
+- name: Let user logging using md5 connection
+  become: true
+  become_user: postgres
+  vars:
+    ansible_ssh_pipelining: true
+  postgresql_pg_hba:
+    dest: /etc/postgresql/16/main/pg_hba.conf
+    contype: host
+    address: all
+    users: all #"{{ postgres_user }}"
+    create: true
+
+- name: Give permission to user
+  become: true
+  become_user: postgres
+  when: false
+  vars:
+    ansible_ssh_pipelining: true
+  postgresql_privs:
+    type: database
+    database: "{{ postgres_db }}"
+    roles: "{{ postgres_user }}"
+    privs: ALL
+
+- name: Grant permissions on votes table
+  become: true
+  become_user: postgres
+  vars:
+    ansible_ssh_pipelining: true
+  postgresql_privs:
+    type: table
+    database: "{{ postgres_db }}"
+    roles: "{{ postgres_user }}"
+    objs: "votes"
+    privs: SELECT,INSERT,UPDATE,DELETE
+
+- name: Ensure UFW allow postgresql traffic
+  become: true
+  ufw:
+    rule: allow
+    port: '"{{ postgres_port }}"'
+    proto: tcp
+    state: reloaded
+
+- name: Restart PostgreSQL
+  become: true
+  service:
+    name: postgresql
+    state: restarted
+    enabled: true
