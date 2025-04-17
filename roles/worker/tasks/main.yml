@@ -1,0 +1,55 @@
+- name: Ensure prerequisites are met
+  become: true
+  apt:
+    name:
+      - wget
+      - gnupg
+      - lsb-release
+    state: present
+
+- name: Upload and de-archive source code
+  unarchive:
+    src: ../../../worker.tar
+    dest: "{{ ansible_env.HOME }}"
+
+- name: Ensure Adoptium signing key is in keyring
+  become: true
+  apt_key:
+    url: https://packages.adoptium.net/artifactory/api/gpg/key/public
+    state: present
+
+- name: Ensure Temurin repository is added
+  become: true
+  apt_repository:
+    repo: "deb https://packages.adoptium.net/artifactory/deb {{ ansible_distribution_release }} main"
+
+- name: Install dependencies
+  become: true
+  apt:
+    pkg:
+      - temurin-21-jdk
+      - maven
+    state: present
+
+- name: Resolve java dependencies
+  shell: mvn dependency:resolve
+  args:
+    chdir: "{{ ansible_env.HOME }}/worker"
+
+- name: Package worker app
+  shell: mvn package
+  args:
+    chdir: "{{ ansible_env.HOME }}/worker"
+
+- name: Create systemd service file
+  become: true
+  template:
+    src: templates/worker.service.j2
+    dest: /etc/systemd/system/worker.service
+
+- name: Start result service
+  become: true
+  systemd:
+    name: worker
+    state: started
+    enabled: true

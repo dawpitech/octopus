@@ -1,0 +1,12 @@
+[Unit]
+Description=Octopus worker service
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+User=root
+WorkingDirectory={{ ansible_env.HOME}}/worker/target
+ExecStart=java -jar worker-jar-with-dependencies.jar
