@@ -22,7 +22,7 @@
 - name: Initial setup of UFW
   become: true
   ufw:
-    rule: allow
+    rule: limit
     name: OpenSSH
 
 - name: Enable UFW
