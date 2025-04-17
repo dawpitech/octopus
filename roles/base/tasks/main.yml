@@ -14,8 +14,22 @@
       - curl
       - unzip
       - zsh
+      - ufw
 
 - name: Set timezone to Europe/Paris
   become: true
   community.general.timezone:
     name: Europe/Paris
+
+- name: Initial setup of UFW
+  become: true
+  ufw:
+    rule: allow
+    name: OpenSSH
+
+- name: Enable UFW
+  become: true
+  ufw:
+    rule: reject
+    state: disabled
+
