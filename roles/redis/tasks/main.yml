@@ -11,9 +11,17 @@
     dest: /etc/redis/redis.conf
     owner: redis
 
+- name: Ensure UFW allow reddis traffic
+  become: true
+  ufw:
+    rule: allow
+    port: '6379'
+    proto: tcp
+    state: reloaded
+
 - name: Ensure Redis is started
   become: true
   service:
     name: redis-server
-    state: started
+    state: restarted
     enabled: true
