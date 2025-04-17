@@ -10,3 +10,9 @@ RestartSec=1
 User=root
 WorkingDirectory={{ ansible_env.HOME}}/worker/target
 ExecStart=java -jar worker-jar-with-dependencies.jar
+Environment="REDIS_HOST={{ redis_host }}"
+Environment="POSTGRES_HOST={{ postgres_host }}"
+Environment="POSTGRES_PORT={{ postgres_port }}"
+Environment="POSTGRES_DB={{ postgres_db }}"
+Environment="POSTGRES_USER={{ postgres_user }}"
+Environment="POSTGRES_PASSWORD={{ postgres_password }}"

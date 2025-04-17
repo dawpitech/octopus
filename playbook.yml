@@ -33,5 +33,12 @@
         - result
 
 - hosts: worker
+  vars:
+    redis_host: "{{ hostvars[groups['redis'][0]]['ansible_host'] }}"
+    postgres_host: "{{ hostvars[groups['postgresql'][0]]['ansible_host'] }}"
+    postgres_port: 5432
+    postgres_db: votes
+    postgres_user: paul
+    postgres_password: password
   roles:
         - worker
