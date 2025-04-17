@@ -7,17 +7,11 @@
         - redis
 
 - hosts: postgresql
-  vars:
-    postgres_port: 5432
-    postgres_db: votes
-    postgres_user: paul
-    postgres_password: password
   roles:
         - postgresql
 
 - hosts: poll
   vars:
-    poll_port: 80
     redis_host: "{{ hostvars[groups['redis'][0]]['ansible_host'] }}"
   roles:
         - poll
@@ -25,10 +19,6 @@
 - hosts: result
   vars:
     postgres_host: "{{ hostvars[groups['postgresql'][0]]['ansible_host'] }}"
-    postgres_port: 5432
-    postgres_db: votes
-    postgres_user: paul
-    postgres_password: password
   roles:
         - result
 
@@ -36,9 +26,6 @@
   vars:
     redis_host: "{{ hostvars[groups['redis'][0]]['ansible_host'] }}"
     postgres_host: "{{ hostvars[groups['postgresql'][0]]['ansible_host'] }}"
-    postgres_port: 5432
-    postgres_db: votes
-    postgres_user: paul
-    postgres_password: password
+
   roles:
         - worker
