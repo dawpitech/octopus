@@ -87,18 +87,6 @@
     users: all
     create: true
 
-- name: Give permission to user
-  become: true
-  become_user: postgres
-  when: false
-  vars:
-    ansible_ssh_pipelining: true
-  postgresql_privs:
-    type: database
-    database: "{{ postgres_db }}"
-    roles: "{{ postgres_user }}"
-    privs: ALL
-
 - name: Grant permissions on votes table
   become: true
   become_user: postgres
