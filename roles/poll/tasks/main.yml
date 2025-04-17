@@ -21,6 +21,14 @@
     src: templates/poll.service.j2
     dest: /etc/systemd/system/poll.service
 
+- name: Ensure UFW allow webapp traffic
+  become: true
+  ufw:
+    rule: allow
+    port: '{{ poll_port}}'
+    proto: tcp
+    state: reloaded
+
 - name: Start poll service
   become: true
   systemd:
