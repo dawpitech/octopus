@@ -7,9 +7,9 @@ StartLimitIntervalSec=0
 Type=simple
 Restart=always
 RestartSec=1
-User=root
-WorkingDirectory={{ ansible_env.HOME}}/worker/target
-ExecStart=java -jar worker-jar-with-dependencies.jar
+User=worker
+WorkingDirectory=/home/worker
+ExecStart=/usr/bin/java -jar worker-jar-with-dependencies.jar
 Environment="REDIS_HOST={{ redis_host }}"
 Environment="POSTGRES_HOST={{ postgres_host }}"
 Environment="POSTGRES_PORT={{ postgres_port }}"

@@ -1,3 +1,11 @@
+- name: Create service user
+  become: true
+  user:
+    name: result
+    system: true
+    shell: /bin/false
+    create_home: true
+
 - name: Upload and de-archive source code
   unarchive:
     src: ../../../result.tar
@@ -24,6 +32,15 @@
     insert: 0
     insert_relative_to: "first-ipv4"
     state: reloaded
+
+- name: Copy target source to result home
+  become: true
+  copy:
+    remote_src: true
+    src: "{{ ansible_env.HOME }}/result/"
+    dest: "/home/result/"
+    owner: result
+    group: result
 
 - name: Create systemd service file
   become: true

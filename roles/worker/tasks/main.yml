@@ -7,6 +7,14 @@
       - lsb-release
     state: present
 
+- name: Create service user
+  become: true
+  user:
+    name: worker
+    system: true
+    shell: /bin/false
+    create_home: true
+
 - name: Upload and de-archive source code
   unarchive:
     src: ../../../worker.tar
@@ -40,6 +48,16 @@
   shell: mvn package
   args:
     chdir: "{{ ansible_env.HOME }}/worker"
+
+- name: Copy target binary to worker home
+  become: true
+  copy:
+    remote_src: true
+    src: "{{ ansible_env.HOME }}/worker/target/worker-jar-with-dependencies.jar"
+    dest: "/home/worker/worker-jar-with-dependencies.jar"
+    owner: worker
+    group: worker
+    mode: '0440'
 
 - name: Create systemd service file
   become: true

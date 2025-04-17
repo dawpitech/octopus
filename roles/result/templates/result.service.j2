@@ -7,9 +7,11 @@ StartLimitIntervalSec=0
 Type=simple
 Restart=always
 RestartSec=1
-User=root
-WorkingDirectory={{ ansible_env.HOME }}/result
-ExecStart=node server.js
+User=result
+AmbientCapabilities=CAP_NET_BIND_SERVICE
+CapabilityBoundingSet=CAP_NET_BIND_SERVICE
+WorkingDirectory=/home/result
+ExecStart=/usr/bin/node server.js
 Environment="POSTGRES_HOST={{ postgres_host }}"
 Environment="POSTGRES_PORT={{ postgres_port }}"
 Environment="POSTGRES_DB={{ postgres_db }}"

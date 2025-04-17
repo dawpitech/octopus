@@ -1,3 +1,11 @@
+- name: Create service user
+  become: true
+  user:
+    name: poll
+    system: true
+    shell: /bin/false
+    create_home: true
+
 - name: Upload and de-archive source code
   unarchive:
     src: ../../../poll.tar
@@ -9,17 +17,24 @@
     name: python3-venv
     state: present
 
-- name: Install python dependencies
-  pip:
-    requirements: "{{ ansible_env.HOME }}/poll/requirements.txt"
-    virtualenv: "{{ ansible_env.HOME }}/poll/venv"
-    virtualenv_command: python3 -m venv
-
-- name: Create systemd service file
+- name: Copy target source to poll home
   become: true
-  template:
-    src: templates/poll.service.j2
-    dest: /etc/systemd/system/poll.service
+  copy:
+    remote_src: true
+    src: "{{ ansible_env.HOME }}/poll/"
+    dest: "/home/poll/"
+    owner: poll
+    group: poll
+
+- name: Install python dependencies
+  become: true
+  become_user: poll
+  vars:
+    ansible_ssh_pipelining: true
+  pip:
+    requirements: "/home/poll/requirements.txt"
+    virtualenv: "/home/poll/venv"
+    virtualenv_command: python3 -m venv
 
 - name: Ensure UFW allow webapp traffic
   become: true
@@ -29,6 +44,12 @@
     insert: 0
     insert_relative_to: "first-ipv4"
     state: reloaded
+
+- name: Create systemd service file
+  become: true
+  template:
+    src: templates/poll.service.j2
+    dest: /etc/systemd/system/poll.service
 
 - name: Start poll service
   become: true
