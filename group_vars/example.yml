@@ -1,6 +1,6 @@
-postgres_port:
+postgres_port: 5432
 postgres_db:
 postgres_user:
 postgres_password:
 
-poll_port:
+poll_port: 80
