@@ -6,8 +6,8 @@
 
 - name: Ensure Redis configuration
   become: true
-  template:
-    src: ../files/redis.conf
+  copy:
+    src: files/redis.conf
     dest: /etc/redis/redis.conf
     owner: redis
 

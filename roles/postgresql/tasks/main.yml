@@ -42,8 +42,8 @@
 
 - name: Copy database schema on machine
   become: true
-  template:
-    src: ../files/schema.sql
+  copy:
+    src: files/schema.sql
     dest: /etc/postgresql/16/main/schema.sql
     owner: postgres
 
