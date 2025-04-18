@@ -16,3 +16,6 @@ Environment="POSTGRES_PORT={{ postgres_port }}"
 Environment="POSTGRES_DB={{ postgres_db }}"
 Environment="POSTGRES_USER={{ postgres_user }}"
 Environment="POSTGRES_PASSWORD={{ postgres_password }}"
+
+[Install]
+WantedBy=multi-user.target

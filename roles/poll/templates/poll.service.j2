@@ -13,3 +13,6 @@ CapabilityBoundingSet=CAP_NET_BIND_SERVICE
 WorkingDirectory=/home/poll
 ExecStart=/home/poll/venv/bin/flask run --host=0.0.0.0 --port={{ poll_port }}
 Environment="REDIS_HOST={{ redis_host }}"
+
+[Install]
+WantedBy=multi-user.target
