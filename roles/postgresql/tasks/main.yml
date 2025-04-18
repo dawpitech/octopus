@@ -99,7 +99,7 @@
     objs: "votes"
     privs: SELECT,INSERT,UPDATE,DELETE
 
-- name: Ensure UFW allow postgresql traffic
+- name: Ensure UFW allow postgresql traffic only from RFC1918 local networks
   become: true
   ufw:
     rule: allow
@@ -107,6 +107,11 @@
     insert: 0
     insert_relative_to: "first-ipv4"
     state: reloaded
+    from: '{{ item }}'
+  loop:
+    - 10.0.0.0/8
+    - 172.16.0.0/12
+    - 192.168.0.0/16
 
 - name: Restart PostgreSQL
   become: true

@@ -11,7 +11,7 @@
     dest: /etc/redis/redis.conf
     owner: redis
 
-- name: Ensure UFW allow reddis traffic only on RFC1918 local networks
+- name: Ensure UFW allow reddis traffic only from RFC1918 local networks
   become: true
   ufw:
     rule: allow
